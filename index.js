@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
 
 const questionsRouter = require('./routes/questions');
 const generateRouter  = require('./routes/generate');
