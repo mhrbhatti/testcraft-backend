@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #000; line-height: 1.4; }
+
+  .page { width: 210mm; min-height: 297mm; padding: 12mm 15mm 12mm 15mm; position: relative; }
+
+  .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px; border-bottom: 3px solid #c8a800; margin-bottom: 4px; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .logo-img { width: 64px; height: 64px; object-fit: contain; }
+  .logo-placeholder { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-size: 8pt; color: #666; border: 1px dashed #ccc; border-radius: 4px; text-align: center; }
+  .academy-name .name { font-size: 16pt; font-weight: 900; color: #003399; letter-spacing: 0.5px; text-transform: uppercase; font-family: Arial, sans-serif; }
+  .academy-name .tagline { font-size: 9pt; color: #c8a800; font-style: italic; letter-spacing: 2px; font-family: Arial, sans-serif; }
+  .header-right { text-align: center; font-family: Arial, sans-serif; }
+  .header-right .session { font-size: 10pt; font-weight: 700; }
+  .header-right .test-type { font-size: 12pt; font-weight: 900; text-transform: uppercase; }
+  .header-right .test-no { font-size: 11pt; font-weight: 700; }
+
+  .gold-rule { height: 2px; background: #c8a800; margin: 3px 0 6px 0; }
+  .quote-bar { text-align: center; font-style: italic; font-size: 9.5pt; margin-bottom: 8px; color: #222; }
+
+  .meta-table { width: 100%; font-family: Arial, sans-serif; font-size: 10.5pt; margin-bottom: 6px; }
+  .meta-table td { padding: 1px 0; }
+  .meta-table .label { font-weight: 700; width: 120px; }
+
+  .note-box { font-family: Arial, sans-serif; font-size: 10pt; margin-bottom: 8px; }
+  .note-box b { text-decoration: underline; }
+
+  .student-row { display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 10.5pt; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #000; padding-bottom: 4px; }
+  .underline { border-bottom: 1px solid #000; min-width: 160px; display: inline-block; }
+
+  .section-heading { font-family: Arial, sans-serif; font-size: 10.5pt; font-weight: 700; margin: 10px 0 6px 0; display: flex; justify-content: space-between; align-items: baseline; }
+
+  .mcq-table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 9.5pt; margin-bottom: 8px; }
+  .mcq-table th { border: 1px solid #000; padding: 4px 6px; text-align: center; font-weight: 700; background: #f0f0f0; }
+  .mcq-table th:nth-child(1) { width: 30px; }
+  .mcq-table th:nth-child(2) { text-align: left; }
+  .mcq-table th:nth-child(3), .mcq-table th:nth-child(4), .mcq-table th:nth-child(5), .mcq-table th:nth-child(6) { width: 14%; text-align: center; }
+  .mcq-table td { border: 1px solid #000; padding: 4px 6px; vertical-align: middle; }
+  .mcq-table td:nth-child(1) { text-align: center; font-weight: 700; }
+  .mcq-table td:nth-child(3), .mcq-table td:nth-child(4), .mcq-table td:nth-child(5), .mcq-table td:nth-child(6) { text-align: center; }
+  .mcq-table tr:nth-child(even) td { background: #fafafa; }
+
+  .q-block { margin-bottom: 12px; }
+  .q-title { font-family: Arial, sans-serif; font-size: 10.5pt; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .q-block ol { padding-left: 28px; font-family: Arial, sans-serif; font-size: 10pt; }
+  .q-block ol li { margin-bottom: 2px; }
+
+  .long-block { margin-bottom: 8px; }
+  .long-title { font-family: Arial, sans-serif; font-size: 10.5pt; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .long-q-list { font-family: Arial, sans-serif; font-size: 10pt; padding-left: 0; list-style: none; }
+  .long-q-list li { margin-bottom: 4px; display: flex; gap: 8px; }
+  .long-q-list li .qno { font-weight: 700; min-width: 28px; }
+
+  .footer { margin-top: 16px; border-top: 1px solid #000; padding-top: 5px; display: flex; justify-content: center; font-style: italic; font-size: 9.5pt; font-family: Arial, sans-serif; }
+  .best-luck { text-align: center; font-family: Arial, sans-serif; font-weight: 700; font-size: 11pt; margin: 14px 0 8px 0; border-top: 1px solid #000; padding-top: 8px; }
+  .sec-heading { text-align:center; font-weight:700; font-family:Arial,sans-serif; font-size:10.5pt; margin: 8px 0 6px 0; text-decoration: underline; }
+  .page-break { page-break-after: always; break-after: page; }
+</style>
+</head>
+<body>
+<script>
+const paper = PAPER_DATA_PLACEHOLDER;
+
+function buildHeader(container) {
+  const schema = paper.schema;
+  const header = document.createElement('div');
+  header.className = 'header';
+
+  const left = document.createElement('div');
+  left.className = 'header-left';
+
+  // Logo
+  const logoEl = document.createElement('img');
+  logoEl.className = 'logo-img';
+  logoEl.src = paper.logoBase64 || '';
+  logoEl.onerror = function() {
+    const ph = document.createElement('div');
+    ph.className = 'logo-placeholder';
+    ph.textContent = 'LOGO';
+    logoEl.parentNode.replaceChild(ph, logoEl);
+  };
+
+  const nameDiv = document.createElement('div');
+  nameDiv.className = 'academy-name';
+  nameDiv.innerHTML = `<div class="name">${paper.academyName || 'Vertex Academy of Sciences'}</div><div class="tagline">${paper.tagline || 'Climb Higher With Vertex'}</div>`;
+
+  left.appendChild(logoEl);
+  left.appendChild(nameDiv);
+
+  const right = document.createElement('div');
+  right.className = 'header-right';
+  right.innerHTML = `<div class="session">ACADEMIC SESSION ${paper.session || '2025-2026'}</div><div class="test-type">${schema.name}</div><div class="test-no">TEST No. ___</div>`;
+
+  header.appendChild(left);
+  header.appendChild(right);
+  container.appendChild(header);
+
+  const rule = document.createElement('div');
+  rule.className = 'gold-rule';
+  container.appendChild(rule);
+
+  const quote = document.createElement('div');
+  quote.className = 'quote-bar';
+  quote.innerHTML = '&ldquo;Every question you attempt is a step toward improvement&rdquo;';
+  container.appendChild(quote);
+}
+
+function buildMeta(container, showNote) {
+  const classLabel = paper.classLevel === '13' ? '1st Year' : paper.classLevel === '14' ? '2nd Year' : 'Class ' + paper.classLevel;
+  const meta = document.createElement('table');
+  meta.className = 'meta-table';
+  meta.innerHTML = `
+    <tr>
+      <td class="label">Subject:</td><td>${paper.subject}</td>
+      <td style="text-align:right"><b>Time allowed:</b> ____________</td>
+    </tr>
+    <tr>
+      <td class="label">Class:</td><td>${classLabel}</td>
+      <td style="text-align:right"><b>Marks:</b> &nbsp;&nbsp; ${paper.totalMarks}</td>
+    </tr>`;
+  container.appendChild(meta);
+
+  if (showNote) {
+    const note = document.createElement('div');
+    note.className = 'note-box';
+    note.innerHTML = '<b>Note: Choose the correct option (A, B, C, or D). Fill the Bubble sheet for answers. The bubble sheet should be properly filled with ink pen/marker. Remover is strictly disallowed and will result in zero marks.</b>';
+    container.appendChild(note);
+  }
+
+  const sr = document.createElement('div');
+  sr.className = 'student-row';
+  sr.innerHTML = `<div>Student Name: <span class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div><div>Roll No: <span class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
+  container.appendChild(sr);
+}
+
+function buildMCQTable(container) {
+  const mcqs = paper.sections.mcqs;
+  if (!mcqs || !mcqs.length) return;
+  const mcqSchema = paper.schema.sections.find(s => s.type === 'mcq');
+  const heading = document.createElement('div');
+  heading.className = 'section-heading';
+  heading.innerHTML = `<span>Q.1 Attempt All the Questions.</span><span>(${mcqSchema.count} x ${mcqSchema.marksEach} = ${mcqSchema.count * mcqSchema.marksEach} marks)</span>`;
+  container.appendChild(heading);
+
+  const table = document.createElement('table');
+  table.className = 'mcq-table';
+  table.innerHTML = `<thead><tr><th>Sr</th><th>Question</th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+  mcqs.forEach((q, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${q.questionText}</td><td>${(q.options&&q.options[0])||''}</td><td>${(q.options&&q.options[1])||''}</td><td>${(q.options&&q.options[2])||''}</td><td>${(q.options&&q.options[3])||''}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  container.appendChild(table);
+}
+
+function buildMCQOnly(container) {
+  const mcqs = paper.sections.mcqs;
+  if (!mcqs || !mcqs.length) return;
+  const heading = document.createElement('div');
+  heading.className = 'section-heading';
+  heading.innerHTML = `<span>Q.1 Attempt All the Questions.</span><span>(${mcqs.length} x 1 = ${mcqs.length} marks)</span>`;
+  container.appendChild(heading);
+  const table = document.createElement('table');
+  table.className = 'mcq-table';
+  table.innerHTML = `<thead><tr><th>Sr</th><th>Question</th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+  mcqs.forEach((q, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${q.questionText}</td><td>${(q.options&&q.options[0])||''}</td><td>${(q.options&&q.options[1])||''}</td><td>${(q.options&&q.options[2])||''}</td><td>${(q.options&&q.options[3])||''}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  container.appendChild(table);
+}
+
+function buildShortGroups(container) {
+  const schema = paper.schema;
+  if (paper.sections.shorts && paper.sections.shorts.length) {
+    const shortSchema = schema.sections.find(s => s.type === 'short' && !s.groups);
+    const block = document.createElement('div');
+    block.className = 'q-block';
+    const title = document.createElement('div');
+    title.className = 'q-title';
+    const att = shortSchema.attempt || shortSchema.count;
+    title.innerHTML = `<span>Q.2 Attempt any ${att} of the following Questions:</span><span>(${shortSchema.marksEach} x ${att} = ${shortSchema.marksEach * att} marks)</span>`;
+    block.appendChild(title);
+    const ol = document.createElement('ol');
+    ol.setAttribute('type','i');
+    paper.sections.shorts.forEach(q => { const li = document.createElement('li'); li.textContent = q.questionText; ol.appendChild(li); });
+    block.appendChild(ol);
+    container.appendChild(block);
+  }
+
+  if (paper.sections.shortGroups && paper.sections.shortGroups.length) {
+    const shortSchema = schema.sections.find(s => s.type === 'short' && s.groups);
+    paper.sections.shortGroups.forEach((group, gi) => {
+      const block = document.createElement('div');
+      block.className = 'q-block';
+      const title = document.createElement('div');
+      title.className = 'q-title';
+      title.innerHTML = `<span>Q.${gi+2} Attempt any ${group.attempt} of the following Questions:</span><span>(${shortSchema.marksEach} x ${group.attempt} = ${shortSchema.marksEach * group.attempt} marks)</span>`;
+      block.appendChild(title);
+      const ol = document.createElement('ol');
+      ol.setAttribute('type','i');
+      group.questions.forEach(q => { const li = document.createElement('li'); li.textContent = q.questionText; ol.appendChild(li); });
+      block.appendChild(ol);
+      container.appendChild(block);
+    });
+  }
+}
+
+function buildLongs(container) {
+  const longs = paper.sections.longs;
+  if (!longs || !longs.length) return;
+  const longSchema = paper.schema.sections.find(s => s.type === 'long');
+  const attemptCount = paper.sections.longsAttempt || longs.length;
+  const totalShortGroups = paper.sections.shortGroups ? paper.sections.shortGroups.length : (paper.sections.shorts ? 1 : 0);
+  const sectionNum = totalShortGroups + 2;
+
+  const secH = document.createElement('div');
+  secH.className = 'sec-heading';
+  secH.textContent = 'Section \u2013 II';
+  container.appendChild(secH);
+
+  const block = document.createElement('div');
+  block.className = 'long-block';
+  const title = document.createElement('div');
+  title.className = 'long-title';
+  title.innerHTML = `<span>Note: Attempt ALL of the following Questions:</span><span>(${longSchema.marksEach} x ${attemptCount} = ${longSchema.marksEach * attemptCount} marks)</span>`;
+  block.appendChild(title);
+  const ul = document.createElement('ul');
+  ul.className = 'long-q-list';
+  longs.forEach((q, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="qno">Q.${sectionNum+i}</span><span>${q.questionText}</span>`;
+    ul.appendChild(li);
+  });
+  block.appendChild(ul);
+  container.appendChild(block);
+}
+
+function buildFooter(container) {
+  const footer = document.createElement('div');
+  footer.className = 'footer';
+  footer.innerHTML = '&ldquo;Every question you attempt is a step toward improvement&rdquo;';
+  container.appendChild(footer);
+}
+
+// ── Determine layout ──
+const isFLP     = paper.testType === 'flp';
+const isMCQOnly = paper.testType === 'mcq-only';
+
+if (isMCQOnly) {
+  const page = document.createElement('div');
+  page.className = 'page';
+  buildHeader(page);
+  buildMeta(page, true);
+  buildMCQOnly(page);
+  buildFooter(page);
+  document.body.appendChild(page);
+} else if (isFLP) {
+  const page1 = document.createElement('div');
+  page1.className = 'page page-break';
+  buildHeader(page1);
+  buildMeta(page1, true);
+  buildMCQTable(page1);
+  buildFooter(page1);
+  document.body.appendChild(page1);
+
+  const page2 = document.createElement('div');
+  page2.className = 'page';
+  buildHeader(page2);
+  buildMeta(page2, false);
+  const secI = document.createElement('div');
+  secI.className = 'sec-heading';
+  secI.textContent = 'Section - I';
+  page2.appendChild(secI);
+  buildShortGroups(page2);
+  const luck = document.createElement('div');
+  luck.className = 'best-luck';
+  luck.textContent = '-Best Of Luck-';
+  page2.appendChild(luck);
+  buildLongs(page2);
+  buildFooter(page2);
+  document.body.appendChild(page2);
+} else {
+  const page = document.createElement('div');
+  page.className = 'page';
+  buildHeader(page);
+  buildMeta(page, true);
+  buildMCQTable(page);
+  const secI = document.createElement('div');
+  secI.className = 'sec-heading';
+  secI.textContent = 'Section - I';
+  page.appendChild(secI);
+  buildShortGroups(page);
+  const luck = document.createElement('div');
+  luck.className = 'best-luck';
+  luck.textContent = '-Best Of Luck-';
+  page.appendChild(luck);
+  buildLongs(page);
+  buildFooter(page);
+  document.body.appendChild(page);
+}
+</script>
+</body>
+</html>
